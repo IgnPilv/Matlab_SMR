@@ -24,7 +24,7 @@ Ta = Yfuncvec(8); % K Coolant Temperature
 Qr = Yfuncvec(9); % W Heat generated
 Qf = Yfuncvec(10); % W Heat generated
 Tw = Yfuncvec(11); % W Heat generated
-global P0 T0 Ft0 rhoc U a Rgas Rsi alpha rlist glbp Wspan2 rhob Ac sb hi
+global P0 T0 Ft0 rhoc U a Rgas alpha rlist glbp Wspan2 rhob Ac sb hi
 % Explicit equations
 Ft = Fa + Fb + Fc + Fd + Fe; % kmol/h total molar flowrate
 % Heat of reactions

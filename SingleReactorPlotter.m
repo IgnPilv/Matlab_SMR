@@ -9,7 +9,7 @@
 close all
 clear all
 clc
-global P0 T0 Ft0 rhoc U a Rgas Rsi alpha rlist glbp Wspan2 rhob Ac sb hi
+global P0 T0 Ft0 rhoc U a Rgas alpha rlist glbp Wspan2 rhob Ac sb hi
 % -- DECLARATIONS OF INPUT PARAMETERS
 % Wspan = linspace(0,20000,50000); % Range for the weight of the catalyst kg (xaxis of produced graphs)
 Wspan = (0:5:60000); % Range for the weight of the catalyst kg (xaxis of produced graphs)
