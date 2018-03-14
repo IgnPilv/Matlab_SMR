@@ -25,10 +25,16 @@ P0 = 20*10^5; % Pa inlet pressure
 T0 = 500+273.15; % K inlet temperature
 Ta0 = 1200+273.15; % K inlet coolant temperature
 % a-ch4 b-h2o c-co d-h2 e-co2
+% Fa0 = glbp(7)*1292.0; % kmol/h inlet ch4 flow rate
+% Fb0 = glbp(7)*5350.4; % kmol/h inlet h2o flow rate 3226
+% Fc0 = glbp(7)*149.60; % kmol/h inlet co flow rate
+% Fd0 = glbp(7)*367.20; % kmol/h inlet h2 flow rate
+% Fe0 = glbp(7)*1; % kmol/h inlet co2 flow rate
+
 Fa0 = glbp(7)*1292.0; % kmol/h inlet ch4 flow rate
 Fb0 = glbp(7)*5350.4; % kmol/h inlet h2o flow rate 3226
 Fc0 = glbp(7)*149.60; % kmol/h inlet co flow rate
-Fd0 = glbp(7)*367.20; % kmol/h inlet h2 flow rate
+Fd0 = glbp(7)*367.2; % kmol/h inlet h2 flow rate
 Fe0 = glbp(7)*1; % kmol/h inlet co2 flow rate
 
 Ft0 = Fa0 + Fb0 + Fc0 + Fd0 + Fe0; % kmol/h inlet total flow rate
@@ -39,7 +45,7 @@ sb = 5.670367*10^-8; % W?m?2?K?4
 Dt = 0.0762; % m tube diameter
 % Dt = 0.020; % m tube diameter
 
-Nt = 1280; % number of tubes (used for pressure drop)
+Nt = 1200; % number of tubes (used for pressure drop)
 Ac = 3.1415*Dt*Dt/4*Nt; % m² tube x-section area (used for pressuredrop)
 a = 4/Dt; % 1/m area to volume ratio
 
@@ -61,14 +67,14 @@ rho0 = P0*(m/(Ft0*1000/3600))/(T0*Rgas); % kg/m³ (used for pressure drop)
 G = m/(Ac); % kg/(m² s) mass flux (total mass / total area) (used for pressure drop)
 Beta0 = (G/(rho0*Dp)) * ((1-e)/(e*e*e)) * (((150*(1-e)*nu)/Dp)+(1.75*G)); % (used for pressure drop)
 alpha = (2*Beta0)/(Ac*rhob*P0); % (used for pressure drop)
-u = m/rho0/Ac %m/s
+u = m/rho0/Ac; %m/;s
 
-k = 0.1422; %W/m K
-Re = G*Dt/nu; % Reynolds
-Cpcorr = 700.743; %kJ/kg K
-Pr = Cpcorr*nu/k; %Prandtl
-Nu = 0.023*Re^0.8*Pr^0.3;
-hi = Nu*k/Dt
+% k = 0.1422; %W/m K
+% Re = G*Dt/nu; % Reynolds
+% Cpcorr = 700.743; %kJ/kg K
+% Pr = Cpcorr*nu/k; %Prandtl
+% Nu = 0.023*Re^0.8*Pr^0.4;
+% hi = Nu*k/Dt
 
 % % -- INPUT PARAMETERS FOR ODE SOLVER
 i0 = [Fa0; Fb0; Fc0; Fd0; Fe0; P0; T0; Ta0; 0; 0; T0;]; % Initial values for the dependent variables.
@@ -83,18 +89,20 @@ Taf = interp1(w0,y0(:,8),Wf)-273.15; % C outlet coolant temperature
 Pf = interp1(w0,y0(:,6),Wf); % Pa outlet pressure
 Lf = Wf/(Ac*(1-e)*rhoc); % m Length of reactor
 conv = 1-interp1(w0,y0(:,1),Wf)./Fa0; % - conversation of methane
-Faf = interp1(w0,y0(:,1),Wf) % kmol/h outlet CH4
-Fbf = interp1(w0,y0(:,2),Wf) % kmol/h outlet H2O
-Fcf = interp1(w0,y0(:,3),Wf) % kmol/h outlet CO
-Fdf = interp1(w0,y0(:,4),Wf) % kmol/h outlet H2
-Fef = interp1(w0,y0(:,5),Wf) % kmol/h outlet CO2
+Faf = interp1(w0,y0(:,1),Wf); % kmol/h outlet CH4
+Fbf = interp1(w0,y0(:,2),Wf); % kmol/h outlet H2O
+Fcf = interp1(w0,y0(:,3),Wf); % kmol/h outlet CO
+Fdf = interp1(w0,y0(:,4),Wf); % kmol/h outlet H2
+Fef = interp1(w0,y0(:,5),Wf); % kmol/h outlet CO2
 Vf = Wf /(rhoc*(1-e)); % m³ total volume of reactor
-Qf = interp1(w0,y0(:,9),Wf)/3600*10^-6 % total heat generated J
-Qff = interp1(w0,y0(:,10),Wf)/3600*10^-6 % total heat generated J
+y0(:,9)=y0(:,9)./3600*10^-6;
+y0(:,10)=y0(:,10)./3600*10^-6;
+Qf = interp1(w0,y0(:,9),Wf) % total heat generated J
+Qff = interp1(w0,y0(:,10),Wf) % total heat generated J
 dPbar = (P0-Pf)/100000; % bar pressure drop
 Ftf = interp1(w0,y0(:,1),Wf)+interp1(w0,y0(:,2),Wf)+interp1(w0,y0(:,3),Wf)+interp1(w0,y0(:,4),Wf)+interp1(w0,y0(:,5),Wf);
 % -- TABULAR RESULTS
-fprintf(['INPUT:\nNumber of tubes: %i. Tube diameter: %1.3f m. Inlet temperature: %1.3f C. Inletcoolant temperature : %1.3f C. Inlet pressure : %1.3f Pa.\n'],Nt,Dt,T0,Ta0,P0 );
+fprintf(['INPUT:\nNumber of tubes: %i. Tube diameter: %1.3f m. Inlet temperature: %1.3f C. Inletcoolant temperature : %1.3f C. Inlet pressure : %1.3f Pa.\n'],Nt,Dt,T0-273,Ta0-273,P0 );
 
 
 fprintf(['CH4 feed: %1.3f kmol/h. H2O feed: %1.3f kmol/h. CO feed:: %1.3f kmol/h.\n'],Fa0,Fb0,Fc0);
@@ -127,10 +135,10 @@ title('Reactor flow rate Profiles')
 
 fig3 = figure;
 hold all;
-graph3 = plot(w0,(y0(:,10)),w0,(y0(:,9)));
-legend('Furnace','Reaction')
+graph3 = plot(w0,(y0(:,10)),w0,(y0(:,9)),w0,-(y0(:,9))+(y0(:,10)));
+legend('Furnace','Reaction','Sensible')
 xlabel('W, kg')
-ylabel('T, K')
+ylabel('Q, MW')
 title('Heat consumption')
 
 fig4 = figure;
@@ -168,7 +176,8 @@ rlist=rlist';
 % % fprintf([repmat('%7.4e    ',1,size(rlist,2)),'\n'],rlist')
 % % L0 = w0./(Ac*(1-e)*rhoc) % Length of the reactor
 % disp(1-(y0(1:10,1)./Fa0));
-avgQ = -Qff/(Nt*Dt*3.14*Lf)
-Twf = interp1(w0,y0(:,11),Wf)-273.15 % C outlet coolant temperature
+avgQ = Qff/(Nt*Dt*3.14*Lf)
+% Twf = interp1(w0,y0(:,11),Wf)-273.15 % C outlet coolant temperature
 acpF = Qff/1;
-Atest = Nt*Dt*3.14*Lf
+Atubes = Nt*Dt*3.14*Lf
+Acp15 = Nt*Dt*1.5*Lf

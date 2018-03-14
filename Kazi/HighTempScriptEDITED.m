@@ -4,11 +4,11 @@ clear all;
 close all;
  
 %% Defining globals
-global X T_0 M P_0 k0_1 Ea_1 R rho void_fraction U tube_CSA area_HX flow_area no_tubes Cv_steam m_steam Molar_mass catalyst_diameter  
+global X T_0 T_range M P_0 k0_1 Ea_1 R rho void_fraction U tube_CSA area_HX flow_area no_tubes Cv_steam m_steam Molar_mass catalyst_diameter  
 %% 
 %% Defining the variables
 M_range = linspace(0,120000,500); % Defining the span of catalyst volume for which the solution is determined
-T_0=(350+273.15);  % K
+T_0=375+273.15; % K
 P_0=20*10^0 ; % bar
 % k0_1= exp(7.4);% -
 k0_1= 2.01*10^8;% -
@@ -38,16 +38,11 @@ flow_area=no_tubes*tube_CSA; %total area for fluid flow
 m_H2_out=1.5; %kmol/s
 Molar_mass=[2.02 28.01 18.02 44.01 16.04];
 %Molar flow rate of cumene out in mol/s
-F_H2_out=m_H2_out*1000;
-% F_H2_in=1.283*1000;   
-% F_CO_in=0.3016*1000;   
-% F_H2O_in=1.0608*1000;   
-% F_CO2_in=0.1635*1000;  
-% F_CH4_in=0.00515*1000;  
+F_H2_out=m_H2_out*1000; 
 F_H2_in=4146.300*1000/3600;    % mol/s
 F_CO_in=1409.300*1000/3600;% mol/s
 F_H2O_in=4090.700*1000/3600;   % mol/s
-F_CO2_in=0*1000/3600;  % mol/s
+F_CO2_in=1*1000/3600;  % mol/s
 F_CH4_in=32.300*1000/3600;  % mol/s
 F_tot_in= F_H2_in+F_CO_in+F_H2O_in+F_CO2_in+F_CH4_in; % mol/s 
 %The initial conditions can be arranged in a matrix z_0
@@ -55,7 +50,7 @@ z_0=[F_H2_in F_CO_in F_H2O_in F_CO2_in F_CH4_in F_tot_in T_0 P_0];
  
 %% 
 %% Now calculating the solution
-[M,z] = ode45('HighTempODE', M_range, z_0);
+[M,z] = ode45('HighTempODEEDITED', M_range, z_0);
 %% 
 %% The output matrix is z which has the following elements
 F_H2=z(:,1);   
@@ -66,6 +61,10 @@ F_CH4=z(:,5);
 F_tot=z(:,6);  
 T_reactor=z(:,7);
 P=z(:,8); 
+
+%Conversion of CO
+X=(1-F_CO./F_CO_in);
+
 %% Plotting the solution
 %%
 %Plotting the flowrates of the different compounds in the reactor
@@ -75,10 +74,7 @@ figure(1),...
     ylabel('Flow rate, mol/s'),...
     legend('H2', 'CO', 'H2O', 'CO2', 'CH4');
  
-%%
-%Conversion of CO
-X=(1-F_CO./F_CO_in);
- 
+%% 
 %Plotting the conversion of propene against reactor volume
 figure(2), plot(M,X, 'k--'),...
     title('Conversion of CO with reactor... volume'),...
@@ -91,19 +87,19 @@ figure(3), plot(M,P, 'k'), title('Pressure throughout the reactor'),...
 %%
 %Plotting the coolant and reactor temp profile against reactor volume
 figure(4), plot(M, T_reactor-273,'-b'),...
-    title('Reactor Temperature Profile'),...
+    title('Reactor and Coolant Temperature Profile'),...
     xlabel('Catalyst Weight, kg'),ylabel('Temperature, degC'),...
     legend('T_reactor')
+
 
 Hydrogen_Output= F_H2;
 CO_Output= F_CO;
 CO2_Output= F_CO2;
 H2O_Output= F_H2O;
 
-
 % %%
 % %Finding the volume of the reactor 
-Catalyst_weight=find(F_H2>1390);
+Catalyst_weight=find(F_H2>1400);
 G= find(M>0.1);
 % %Finding volume of the catalyst required
 Catalyst_volume=M(Catalyst_weight(1))/1250;
@@ -140,3 +136,4 @@ fprintf(formatSpec1, 3.6*F_H2O(Catalyst_weight(1)))
 % 
 formatSpec1='The flow rate of CH4 is %1.2f kmol/h\n';
 fprintf(formatSpec1, 3.6*F_CH4(Catalyst_weight(1)))
+disp(X(Catalyst_weight(1)));

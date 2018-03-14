@@ -76,11 +76,11 @@ clear all;
 close all;
  
 %% Defining globals
-global T_0 M P_0 k0_1 Ea_1 R rho void_fraction U tube_CSA area_HX flow_area no_tubes Cv_steam m_steam Molar_mass catalyst_diameter  
+global T_0 M P_0 k0_1 Ea_1 R rho void_fraction U tube_CSA area_HX flow_area no_tubes Cv_steam m_steam Molar_mass catalyst_diameter F_H2_in F_H2O_in F_CO_in F_CO2_in F_tot_in
 %% 
 %% Defining the variables
 M_range = linspace(0,200000,500); % Defining the span of catalyst volume for which the solution is determined
-T_0=(180+273.15);  % K
+T_0=(225+273.15);  % K
 P_0=20*10^0; % bar
 k0_1= 2.01*10^8; % -
 %Universal Gas Constant in J/(molK)
@@ -103,16 +103,11 @@ flow_area=no_tubes*tube_CSA; %total area for fluid flow
 m_H2_out=1.5; %kmol/s
 Molar_mass=[2.02 28.01 18.02 44.01 16.04];
 %Molar flow rate of cumene out in mol/s
-F_H2_out=m_H2_out*1000;
-% F_H2_in=1.283*1000;   
-% F_CO_in=0.3016*1000;   
-% F_H2O_in=1.0608*1000;   
-% F_CO2_in=0.1635*1000;  
-% F_CH4_in=0.00515*1000;  
-F_H2_in=5007.32*1000/3600;    % mol/s
-F_CO_in=548.28*1000/3600;% mol/s
-F_H2O_in=3229.68*1000/3600;   % mol/s
-F_CO2_in=861.02*1000/3600;  % mol/s
+F_H2_out=m_H2_out*1000; 
+F_H2_in=5040.1*1000/3600;    % mol/s
+F_CO_in=515.5*1000/3600;% mol/s
+F_H2O_in=3196.9*1000/3600;   % mol/s
+F_CO2_in=894.8*1000/3600;  % mol/s
 F_CH4_in=32.30*1000/3600;  % mol/s
 F_tot_in= F_H2_in+F_CO_in+F_H2O_in+F_CO2_in+F_CH4_in; % mol/s 
 %The initial conditions can be arranged in a matrix z_0
@@ -120,7 +115,7 @@ z_0=[F_H2_in F_CO_in F_H2O_in F_CO2_in F_CH4_in F_tot_in T_0 P_0];
  
 %% 
 %% Now calculating the solution
-[M,z] = ode45('LowTempODE', M_range, z_0);
+[M,z] = ode45('LowTempODEEDITED', M_range, z_0);
 %% 
 %% The output matrix is z which has the following elements
 F_H2=z(:,1);   
@@ -168,7 +163,7 @@ H2O_Output= F_H2O;
 
 % %%
 % %Finding the volume of the reactor 
-Catalyst_weight=find(F_H2>1500.1);
+Catalyst_weight=find(F_H2>1514.1);
 G= find(M>0.1);
 % %Finding volume of the catalyst required
 Catalyst_volume=M(Catalyst_weight(1))/1442;
@@ -205,3 +200,7 @@ fprintf(formatSpec1, 3.6*F_H2O(Catalyst_weight(1)))
 % 
 formatSpec1='The flow rate of CH4 is %1.2f kmol/h\n';
 fprintf(formatSpec1, 3.6*F_CH4(Catalyst_weight(1)))
+%
+formatSpec1='The composition is %1.2f kmol/h\n';
+fprintf(formatSpec1, 3.6*F_CO(Catalyst_weight(1))/F_tot(Catalyst_weight(1)))
+disp(X(Catalyst_weight(1)));

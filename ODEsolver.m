@@ -108,13 +108,13 @@ dFedW = r2+r3;
 dPdW = glbp(6)*(-alpha/2)*(P0/(P/P0))*(T/T0)*(Ft/Ft0);
 
 
-dTdW = ((U*3600/rhob * a * (Tw - T)) + glbp(5)*(-1*r1*1000 * dHrx1 - r2*1000 * dHrx2 - r3*1000 * dHrx3))/(Fa*1000*Cpa + Fb*1000*Cpb + Fc*1000*Cpc + Fd*1000*Cpd + Fe*1000*Cpe);
+dTdW = ((U*3600/rhob * a * (Ta - T)) + glbp(5)*(-1*r1*1000 * dHrx1 - r2*1000 * dHrx2 - r3*1000 * dHrx3))/(Fa*1000*Cpa + Fb*1000*Cpb + Fc*1000*Cpc + Fd*1000*Cpd + Fe*1000*Cpe);
 dTadW = 0;
 dQrdW = -1*(-r1*1000 * dHrx1 - r2*1000 * dHrx2 - r3*1000 * dHrx3);
-dQhdW = (sb*3600/rhob * a * (Ta.^4 - Tw.^4));
+dQhdW = (U*3600/rhob * a * (Ta - T));
 % dQhdW = (U*3600/rhob * a * (T - Tw));
 % dQhdW = (sb*3600/rhob * a * (Tw.^4 - Ta.^4)) +(U*3600/rhob * a * (T - Tw));
-dTwdW = ((sb*3600*a*(Ta.^4-Tw.^4)/(rhob))-(U*3600/rhob * a * (Tw - T)))/(Fa*1000*Cpa + Fb*1000*Cpb + Fc*1000*Cpc + Fd*1000*Cpd + Fe*1000*Cpe);;
+dTwdW = 0*((sb*3600*a*(Ta.^4-Tw.^4)/(rhob))-(U*3600/rhob * a * (Tw - T)))/(Fa*1000*Cpa + Fb*1000*Cpb + Fc*1000*Cpc + Fd*1000*Cpd + Fe*1000*Cpe);;
 
 % dTdW = ((glbp(4)*U*3600/rhoc * a * (Ta - T)) + glbp(5)*(-1*r1*1000 * dHrx1 - r2*1000 * dHrx2 - r3*1000 * dHrx3))/(Fa*1000*Cpa + Fb*1000*Cpb + Fc*1000*Cpc + Fd*1000*Cpd + Fe*1000*Cpe);
 % dTdW = ((-1*glbp(4)*U*3600*a*(T-Ta)/(rhob)) + glbp(5)*(-1*r1*1000 * dHrx1 - r2*1000 * dHrx2 - r3*1000 * dHrx3))/(Fa*1000*Cpa + Fb*1000*Cpb + Fc*1000*Cpc + Fd*1000*Cpd + Fe*1000*Cpe);
