@@ -187,6 +187,7 @@ dzdM(6)=dzdM(1)+dzdM(2)+dzdM(3)+dzdM(4)+dzdM(5);
 
 % Pressure with respect to reactor volume in Pascals 
 % The Ergun equation was used for the following equation:
+% dPdW = glbp(6)*(-alpha/2)*(P0/(P/P0))*(T/T0)*(Ft/Ft0);
 dzdM(8)=0 ; %-1.*0.*((150.*mu.*u.*(1-void_fraction)^2)/(catalyst_diameter^2.*void_fraction^3)+(1.75.*rho_gas.*u^2.*(1-void_fraction))/(catalyst_diameter.*void_fraction^3))/flow_area;
 
 % Reactor temperature with respect to reactor volume
